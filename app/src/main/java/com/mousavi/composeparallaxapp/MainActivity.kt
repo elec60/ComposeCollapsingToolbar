@@ -1,6 +1,7 @@
 package com.mousavi.composeparallaxapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -68,6 +69,8 @@ fun ParallaxToolbar(scrollState: LazyListState) {
     val maxOffset = with(LocalDensity.current) { imageHeight.roundToPx() }
     val offset = scrollState.firstVisibleItemScrollOffset.coerceAtMost(maxOffset)
 
+    Log.d("offffff", scrollState.firstVisibleItemScrollOffset.toString())
+
     val offsetProgress = 0f.coerceAtLeast(offset * 3f - 2f * maxOffset) / maxOffset
 
     TopAppBar(
@@ -82,14 +85,18 @@ fun ParallaxToolbar(scrollState: LazyListState) {
             Box(
                 modifier = Modifier.height(imageHeight)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.food),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
+                if (offset != maxOffset) {
+                    Image(
+                        painter = painterResource(id = R.drawable.food),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.offset { IntOffset(0, offset / 2) },
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
+                        .offset { IntOffset(0, offset / 2) }
                         .background(
                             Brush.verticalGradient(
                                 colorStops = arrayOf(
@@ -98,6 +105,7 @@ fun ParallaxToolbar(scrollState: LazyListState) {
                                 ),
                             )
                         )
+
                 )
             }
             Column(
@@ -163,7 +171,7 @@ fun Content(scrollState: LazyListState) {
     }
 }
 
-@Preview(showBackground = true, widthDp = 300, heightDp = 1400)
+@Preview(showBackground = true, widthDp = 300, heightDp = 800)
 @Composable
 fun DefaultPreview() {
     ComposeParallaxAppTheme {
